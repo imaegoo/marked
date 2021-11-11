@@ -230,6 +230,10 @@ export class Parser {
       }
 
       switch (token.type) {
+        case 'owo': {
+          out += renderer.owo(token.text);
+          break;
+        }
         case 'escape': {
           out += renderer.text(token.text);
           break;

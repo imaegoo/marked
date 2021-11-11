@@ -1,5 +1,5 @@
 {
-  "name": "marked",
+  "name": "@imaegoo/marked",
   "description": "A markdown parser built for speed",
   "author": "Christopher Jeffrey",
   "version": "4.0.1",
@@ -25,10 +25,10 @@
     },
     "./package.json": "./package.json"
   },
-  "repository": "git://github.com/markedjs/marked.git",
+  "repository": "git://github.com/imaegoo/marked.git",
   "homepage": "https://marked.js.org",
   "bugs": {
-    "url": "http://github.com/markedjs/marked/issues"
+    "url": "http://github.com/imaegoo/marked/issues"
   },
   "license": "MIT",
   "keywords": [
