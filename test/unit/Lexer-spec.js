@@ -94,6 +94,10 @@ lheading 2
 `,
         tokens: [
           {
+            type: 'space',
+            raw: '\n'
+          },
+          {
             type: 'heading',
             raw: '# heading 1\n\n',
             depth: 1,
@@ -175,6 +179,9 @@ lheading 2
 | 1 | 2 |
 `,
         tokens: [{
+          type: 'space',
+          raw: '\n'
+        }, {
           type: 'table',
           align: [null, null],
           raw: '| a | b |\n|---|---|\n| 1 | 2 |\n',
@@ -204,6 +211,54 @@ lheading 2
       });
     });
 
+    it('table after para', () => {
+      expectTokens({
+        md: `
+paragraph 1
+| a | b |
+|---|---|
+| 1 | 2 |
+`,
+        tokens: [{
+          type: 'space',
+          raw: '\n'
+        }, {
+          type: 'paragraph',
+          raw: 'paragraph 1\n',
+          text: 'paragraph 1',
+          tokens: [{ type: 'text', raw: 'paragraph 1', text: 'paragraph 1' }]
+        },
+        {
+          type: 'table',
+          align: [null, null],
+          raw: '| a | b |\n|---|---|\n| 1 | 2 |\n',
+          header: [
+            {
+              text: 'a',
+              tokens: [{ type: 'text', raw: 'a', text: 'a' }]
+            },
+            {
+              text: 'b',
+              tokens: [{ type: 'text', raw: 'b', text: 'b' }]
+            }
+          ],
+          rows: [
+            [
+              {
+                text: '1',
+                tokens: [{ type: 'text', raw: '1', text: '1' }]
+              },
+              {
+                text: '2',
+                tokens: [{ type: 'text', raw: '2', text: '2' }]
+              }
+            ]
+          ]
+        }
+        ]
+      });
+    });
+
     it('align table', () => {
       expectTokens({
         md: `
@@ -212,6 +267,9 @@ lheading 2
 | 1 | 2 | 3 |
 `,
         tokens: [{
+          type: 'space',
+          raw: '\n'
+        }, {
           type: 'table',
           align: ['left', 'center', 'right'],
           raw: '| a | b | c |\n|:--|:-:|--:|\n| 1 | 2 | 3 |\n',
@@ -256,33 +314,37 @@ a | b
 --|--
 1 | 2
 `,
-        tokens: [{
-          type: 'table',
-          align: [null, null],
-          raw: 'a | b\n--|--\n1 | 2\n',
-          header: [
-            {
-              text: 'a',
-              tokens: [{ type: 'text', raw: 'a', text: 'a' }]
-            },
-            {
-              text: 'b',
-              tokens: [{ type: 'text', raw: 'b', text: 'b' }]
-            }
-          ],
-          rows: [
-            [
+        tokens: [
+          {
+            type: 'space',
+            raw: '\n'
+          }, {
+            type: 'table',
+            align: [null, null],
+            raw: 'a | b\n--|--\n1 | 2\n',
+            header: [
               {
-                text: '1',
-                tokens: [{ type: 'text', raw: '1', text: '1' }]
+                text: 'a',
+                tokens: [{ type: 'text', raw: 'a', text: 'a' }]
               },
               {
-                text: '2',
-                tokens: [{ type: 'text', raw: '2', text: '2' }]
+                text: 'b',
+                tokens: [{ type: 'text', raw: 'b', text: 'b' }]
               }
+            ],
+            rows: [
+              [
+                {
+                  text: '1',
+                  tokens: [{ type: 'text', raw: '1', text: '1' }]
+                },
+                {
+                  text: '2',
+                  tokens: [{ type: 'text', raw: '2', text: '2' }]
+                }
+              ]
             ]
-          ]
-        }]
+          }]
       });
     });
   });
@@ -294,6 +356,19 @@ a | b
         tokens: [
           { type: 'hr', raw: '---' }
         ]
+      });
+    });
+
+    it('after line break does not consume raw \n', () => {
+      expectTokens({
+        md: 'T\nh\n---',
+        tokens:
+          jasmine.arrayContaining([
+            jasmine.objectContaining({
+              raw: 'T\nh\n'
+            }),
+            { type: 'hr', raw: '---' }
+          ])
       });
     });
   });
@@ -330,8 +405,11 @@ a | b
 `,
         tokens: [
           {
+            type: 'space',
+            raw: '\n'
+          }, {
             type: 'list',
-            raw: '- item 1\n- item 2',
+            raw: '- item 1\n- item 2\n',
             ordered: false,
             start: '',
             loose: false,
@@ -378,8 +456,12 @@ a | b
 `,
         tokens: jasmine.arrayContaining([
           jasmine.objectContaining({
+            type: 'space',
+            raw: '\n'
+          }),
+          jasmine.objectContaining({
             type: 'list',
-            raw: '1. item 1\n2. item 2',
+            raw: '1. item 1\n2. item 2\n',
             ordered: true,
             start: 1,
             items: [
@@ -403,8 +485,12 @@ a | b
 `,
         tokens: jasmine.arrayContaining([
           jasmine.objectContaining({
+            type: 'space',
+            raw: '\n'
+          }),
+          jasmine.objectContaining({
             type: 'list',
-            raw: '1) item 1\n2) item 2',
+            raw: '1) item 1\n2) item 2\n',
             ordered: true,
             start: 1,
             items: [
@@ -429,6 +515,10 @@ a | b
 paragraph
 `,
         tokens: [
+          {
+            type: 'space',
+            raw: '\n'
+          },
           {
             type: 'list',
             raw: '- item 1\n- item 2',
@@ -469,7 +559,7 @@ paragraph
           { type: 'space', raw: '\n\n' },
           {
             type: 'paragraph',
-            raw: 'paragraph',
+            raw: 'paragraph\n',
             text: 'paragraph',
             tokens: [{
               type: 'text',
@@ -489,8 +579,12 @@ paragraph
 `,
         tokens: jasmine.arrayContaining([
           jasmine.objectContaining({
+            type: 'space',
+            raw: '\n'
+          }),
+          jasmine.objectContaining({
             type: 'list',
-            raw: '2. item 1\n3. item 2',
+            raw: '2. item 1\n3. item 2\n',
             ordered: true,
             start: 2,
             items: [
@@ -515,8 +609,12 @@ paragraph
 `,
         tokens: jasmine.arrayContaining([
           jasmine.objectContaining({
+            type: 'space',
+            raw: '\n'
+          }),
+          jasmine.objectContaining({
             type: 'list',
-            raw: '- item 1\n\n- item 2',
+            raw: '- item 1\n\n- item 2\n',
             loose: true,
             items: [
               jasmine.objectContaining({
@@ -524,6 +622,40 @@ paragraph
               }),
               jasmine.objectContaining({
                 raw: '- item 2'
+              })
+            ]
+          })
+        ])
+      });
+    });
+
+    it('not loose with spaces', () => {
+      expectTokens({
+        md: `
+- item 1
+  - item 2
+`,
+        tokens: jasmine.arrayContaining([
+          jasmine.objectContaining({
+            type: 'space',
+            raw: '\n'
+          }),
+          jasmine.objectContaining({
+            type: 'list',
+            raw: '- item 1\n  - item 2\n',
+            loose: false,
+            items: [
+              jasmine.objectContaining({
+                raw: '- item 1\n  - item 2',
+                tokens: jasmine.arrayContaining([
+                  jasmine.objectContaining({
+                    raw: 'item 1\n'
+                  }),
+                  jasmine.objectContaining({
+                    type: 'list',
+                    raw: '- item 2'
+                  })
+                ])
               })
             ]
           })
@@ -539,8 +671,12 @@ paragraph
 `,
         tokens: jasmine.arrayContaining([
           jasmine.objectContaining({
+            type: 'space',
+            raw: '\n'
+          }),
+          jasmine.objectContaining({
             type: 'list',
-            raw: '- [ ] item 1\n- [x] item 2',
+            raw: '- [ ] item 1\n- [x] item 2\n',
             items: [
               jasmine.objectContaining({
                 raw: '- [ ] item 1\n',
